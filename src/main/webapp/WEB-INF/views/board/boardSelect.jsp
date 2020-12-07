@@ -12,9 +12,9 @@
 	<c:import url="../template/header.jsp"></c:import>
 	<h1>num : ${vo.num}</h1>
 	<h1>writer : ${vo.writer}</h1>
+	<h1>contents : ${vo.contents}</h1>
 	<c:forEach items="${vo.file}" var="file">
 		<a href="./noticeFileDown?fnum=${file.fnum}">${file.fileName}</a>
 	</c:forEach>
-	
 </body>
 </html>
