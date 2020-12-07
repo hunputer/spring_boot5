@@ -1,4 +1,4 @@
-package com.iu.sb4.board.qna;
+package com.iu.sb5.board.qna;
 
 import static org.junit.jupiter.api.Assertions.*;
 

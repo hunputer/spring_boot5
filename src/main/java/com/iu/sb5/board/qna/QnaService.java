@@ -35,6 +35,7 @@ public class QnaService implements BoardService{
 		
 		File file = filePathGenerator.getUseResourceLoader(filePath);
 		int result = qnaMapper.setInsert(boardVO);
+		result = qnaMapper.setRefUpdate(boardVO);
 		
 		for(MultipartFile f : files) {
 			if(f.getSize() != 0) {

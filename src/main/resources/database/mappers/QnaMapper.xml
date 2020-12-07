@@ -24,6 +24,10 @@
     		values (#{num}, #{title}, #{writer}, #{contents}, now(), 0, 0, 0, 0)
     	</insert>
     	
+    	<update id="setRefUpdate" parameterType="QnaVO">
+    		update qna set ref=#{num} where num=#{num}
+    	</update>
+    	
     	<select id="getList" resultType="QnaVO" parameterType="pager">
     		select * from qna where 
 			<include refid="getSearch"></include>

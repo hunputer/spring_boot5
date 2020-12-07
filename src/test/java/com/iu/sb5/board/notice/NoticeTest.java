@@ -1,4 +1,4 @@
-package com.iu.sb4.board.notice;
+package com.iu.sb5.board.notice;
 
 import static org.junit.jupiter.api.Assertions.*;
 
