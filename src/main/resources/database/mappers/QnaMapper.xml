@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+    <mapper namespace="com.iu.sb5.board.qna.QnaMapper">
+    	<sql id="getSearch">
+		<choose>
+        	<when test="kind == 'title'">
+        		title
+        	</when>
+        	<when test="kind == 'writer'">
+        		writer
+        	</when>
+        	<otherwise>
+        		contents
+        	</otherwise>
+        </choose>
+        like '%${search}%' and num>0
+	</sql>
+    	
+    	<insert id="setInsert" parameterType="QnaVO" useGeneratedKeys="true" keyProperty="num">
+    		insert into qna (num, title, writer, contents, regDate, hit, ref, step, depth) 
+    		values (#{num}, #{title}, #{writer}, #{contents}, now(), 0, 0, 0, 0)
+    	</insert>
+    	
+    	<select id="getList" resultType="QnaVO" parameterType="pager">
+    		select * from qna where 
+			<include refid="getSearch"></include>
+			order by num desc limit #{startRow},10
+    	</select>
+    	
+    	<select id="getCount" resultType="Long" parameterType="Pager">
+			select count(num) from qna where 
+			<include refid="getSearch"></include>
+    	</select>
+    	
+    	<insert id="setInsertFile" parameterType="FileVO">
+			insert into qnafiles (num, fileName, oriName) values (#{num}, #{fileName}, #{oriName})
+		</insert>
+		
+		<select id="getOne" resultMap="getOneResult" parameterType="QnaVO">
+			select Q.*, QF.*
+			from qna Q left join qnafiles QF
+			on Q.num = QF.num
+			where Q.num = #{num} 
+		</select>
+		
+		<resultMap type="QnaVO" id="getOneResult">
+			<id column="num" property="num"/>
+			<result column="writer" property="writer"/>
+			<result column="title" property="title"/>
+			<result column="contents" property="contents"/>
+			<result column="regDate" property="regDate" />
+			<collection property="file" javaType="java.util.List" ofType="FileVO">
+				<id column="fnum" property="fnum"/>
+				<result column="fileName" property="fileName" />
+				<result column="oriName" property="oriName"/>
+			</collection>
+		</resultMap>
+    </mapper>

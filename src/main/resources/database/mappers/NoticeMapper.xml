@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+    PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+    "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+    
+<mapper namespace="com.iu.sb5.board.notice.NoticeMapper">
+	
+	<sql id="getSearch">
+		<choose>
+        	<when test="kind == 'title'">
+        		title
+        	</when>
+        	<when test="kind == 'writer'">
+        		writer
+        	</when>
+        	<otherwise>
+        		contents
+        	</otherwise>
+        </choose>
+        like '%${search}%' and num>0
+	</sql>
+	
+	<insert id="setInsert" parameterType="NoticeVO" useGeneratedKeys="true" keyProperty="num">
+		insert into notice (num, title, writer, contents, regDate, hit)
+		values (#{num}, #{title}, #{writer}, #{contents}, now(), 0)
+	</insert>
+	
+	<insert id="setInsertFile" parameterType="FileVO">
+		insert into noticeFiles (num, fileName, oriName) values (#{num}, #{fileName}, #{oriName})
+	</insert>
+	
+	<update id="setUpdate" parameterType="NoticeVO">
+		update notice set title=#{title}, contents=#{contents} where num=#{num}
+	</update>
+	
+	<select id="getOne" parameterType="NoticeVO" resultMap="getOneResult">
+		select N.*, NF.*
+		from notice N left join noticeFiles NF
+		on N.num = NF.num
+		where N.num = #{num}
+	</select>
+	
+	<delete id="setDelete" parameterType="NoticeVO">
+		delete from notice where num=#{num}
+	</delete>
+	
+	<select id="getList" resultType="NoticeVO" parameterType="Pager">
+		select * from notice where 
+		<include refid="getSearch"></include>
+		order by num desc limit #{startRow},10
+	</select>
+	
+	<select id="getCount" resultType="Long" parameterType="Pager">
+		select count(num) from notice where 
+		<include refid="getSearch"></include>
+		
+	</select>
+	
+	<resultMap type="NoticeVO" id="getOneResult">
+		<id column="num" property="num"/>
+		<result column="writer" property="writer"/>
+		<result column="title" property="title"/>
+		<result column="contents" property="contents"/>
+		<result column="regDate" property="regDate" />
+		<collection property="file" javaType="java.util.List" ofType="FileVO">
+			<id column="fnum" property="fnum"/>
+			<result column="fileName" property="fileName" />
+			<result column="oriName" property="oriName"/>
+		</collection>
+	</resultMap>
+	
+	<select id="getFile" parameterType="FileVO" resultType="FileVO">
+		select * from noticeFiles where fnum=#{fnum}
+	</select>
+	
+</mapper>
